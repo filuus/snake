@@ -1,0 +1,145 @@
+<canvas width="400" height="400" id="can">
+    ...treść alternatywna...
+</canvas>
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+
+        let width = 10;
+        let height = 10;
+        const canvasElem = document.getElementById('can');
+        let plansza = canvasElem.getContext('2d');
+        x = 10;
+        y = 10;
+        let i = 10;
+        let j = 0;
+        let tempX = 0;
+        let tempY = 0;
+        let prevX = 0;
+        let prevY = 0;
+        let eatX = Math.floor(Math.random() * 41) * 10;
+        let eatY = Math.floor(Math.random() * 41) * 10;
+        let tab = [
+            [40, 0],
+            [30, 0],
+            [20, 0],
+            [10, 0],
+            [0, 0]
+        ];
+        let g = 0;
+
+        console.log(tab[0]);
+        document.addEventListener("keydown", function(e) {
+            if (e.keyCode == 37) {
+                if (i - 10 != 0) {
+                    i = -10;
+                    j = 0;
+                }
+            } else if (e.keyCode == 38) {
+                if (j - 10 != 0) {
+                    i = 0;
+                    j = -10;
+                }
+            } else if (e.keyCode == 39) {
+                if (i + 10 != 0) {
+                    i = 10;
+                    j = 0;
+                }
+            } else if (e.keyCode == 40) {
+                if (j + 10 != 0) {
+                    i = 0;
+                    j = 10;
+                }
+            }
+
+        });
+
+        function eatRandom() {
+            let eat = [];
+            eat[0] = Math.floor(Math.random() * 40) * 10;
+            eat[1] = Math.floor(Math.random() * 40) * 10;
+            return eat;
+        }
+
+
+        function checkIsHungry(sx, sy) {
+            if (sx == eatX && sy == eatY) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkIsOver(wx, wy) {
+            g = 0;
+            tab.forEach(function(value, key, tab) {
+                if (key != 0) {
+                    if (value[0] == wx && value[1] == wy) {
+                        g++;
+                    };
+                };
+            });
+            if (g > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        let draw = function funcDraw() {
+
+            tab.forEach(function(value, key, tab) {
+                tempX = value[0];
+                tempY = value[1];
+                if (key == 0) {
+                    if (checkIsOver(tempX, tempY)) {
+                        clearInterval(idInterval);
+                    }
+                    if (checkIsHungry(value[0], value[1])) {
+                        tab.push([0, 0]);
+                        eatX = eatRandom()[0];
+                        eatY = eatRandom()[1];
+                    }
+                    if (i < 0) {
+                        value[0] = (400 + tempX + i) % 400;
+                        value[1] = tempY + j;
+                    } else if (j < 0) {
+                        value[0] = tempX + i;
+                        value[1] = (400 + tempY + j) % 400;
+                    } else if (i > 0) {
+                        value[0] = (tempX + i) % 400;
+                        value[1] = tempY + j;
+                    } else if (j > 0) {
+                        value[0] = tempX + i;
+                        value[1] = (tempY + j) % 400;
+                    }
+                } else {
+                    value[0] = prevX;
+                    value[1] = prevY;
+                }
+
+                prevX = tempX;
+                prevY = tempY;
+            });
+
+
+            plansza.fillStyle = "black";
+            plansza.fillRect(0, 0, 400, 400);
+            plansza.fillStyle = "white";
+            tab.forEach(function(value, key, tab) {
+                plansza.fillRect(value[0], value[1], width, height);
+            });
+            plansza.fillRect(eatX, eatY, width, height);
+
+        }
+
+
+        // function engine(key) {
+        // if
+        // }
+
+
+        const idInterval = setInterval(draw, 50);
+
+    });
+
+</script>
